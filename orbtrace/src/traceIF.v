@@ -42,7 +42,7 @@ module traceIF # (parameter BUSWIDTH = 4) (
 		  
    reg [2:0] 	offset;                   // Offset in sync process
 
-   wire 	newSync;                  // Indicator that sync has been discovered
+   reg		newSync;                  // Indicator that sync has been discovered
 
    // Make the trace input clock available for writing to the dual port RAM
    assign wrClk=traceClkin;
@@ -61,9 +61,10 @@ module traceIF # (parameter BUSWIDTH = 4) (
 	else
 	  begin
 	     // Deal with sync flagging ===============================================
+	     // (as per ARM CoreSight Architecture Specification v2.0, Section D4.2.2)
 	     if (gotSync==0)
 	       begin
-		  newSync=1;
+		  newSync <= 1;
 		  if (construct[38 -: 32]==32'h7fff_ffff) offset<=7;
 		  else
 		    if (construct[37 -: 32]==32'h7fff_ffff) offset<=6;
@@ -80,10 +81,10 @@ module traceIF # (parameter BUSWIDTH = 4) (
 			      else
 				if (construct[31 -:32]==32'h7fff_ffff) offset<=0;
 				else
-				  newSync=0;
+				  newSync <= 0;
 	       end else // if (gotSync==0)
 		 begin
-		    newSync=0;
+		    newSync <= 0;
 		    if (gotSync>0) gotSync<=gotSync-1;
 		    PacketReset <= 1'b0; // Stop erasing any partial packets
 		 end
@@ -115,6 +116,7 @@ module traceIF # (parameter BUSWIDTH = 4) (
 		       if ((sync) && (readBits==16))
 			 begin
 			    // Got a full set of bits, so store them ... except if they're useless
+			    // (as per ARM CoreSight Architecture Specification v2.0, Section D4.2.3)
 			    if (construct[31+offset -:16]!=16'h7fff)
 			      begin
 				 PacketWd<=construct[31+offset -:16];

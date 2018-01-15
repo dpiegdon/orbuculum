@@ -15,6 +15,14 @@ module topLevel(
 		
 		// Config and housekeeping
 		input 	    clkIn,
+		`ifdef SIMULATION
+		// simulation of PLL is not possible,
+		// so we have to inject the clock here.
+		// FIXME: split orbtrace code and hardware interfacing more
+		// cleanly, so simulation layer can just replace hardware.
+		input 	    inject_pll_clk48,
+		input 	    inject_pll_lock,
+		`endif // SIMULATION
 		input 	    rst,
 
 		// Other indicators
@@ -60,7 +68,13 @@ SB_GB_IO #(.PIN_TYPE(6'b000001)) BtraceClk0
 SB_IO #(.PULLUP(0)) MtraceIn0
 (
  .PACKAGE_PIN (traceDin[0]),
+ .LATCH_INPUT_VALUE (1),
+ .CLOCK_ENABLE (1),
  .INPUT_CLK (BtraceClk),
+ .OUTPUT_CLK (0),
+ .OUTPUT_ENABLE (0),
+ .D_OUT_0 (1'bz),
+ .D_OUT_1 (1'bz),
  .D_IN_0 (tTraceDina[0]),
  .D_IN_1 (tTraceDinb[0])
  );
@@ -68,7 +82,13 @@ SB_IO #(.PULLUP(0)) MtraceIn0
 SB_IO #(.PULLUP(0)) MtraceIn1
 (
  .PACKAGE_PIN (traceDin[1]),
+ .LATCH_INPUT_VALUE (1),
+ .CLOCK_ENABLE (1),
  .INPUT_CLK (BtraceClk),
+ .OUTPUT_CLK (0),
+ .OUTPUT_ENABLE (0),
+ .D_OUT_0 (1'bz),
+ .D_OUT_1 (1'bz),
  .D_IN_0 (tTraceDina[1]),
  .D_IN_1 (tTraceDinb[1])
   );
@@ -76,7 +96,13 @@ SB_IO #(.PULLUP(0)) MtraceIn1
 SB_IO #(.PULLUP(0)) MtraceIn2
 (
  .PACKAGE_PIN (traceDin[2]),
+ .LATCH_INPUT_VALUE (1),
+ .CLOCK_ENABLE (1),
  .INPUT_CLK (BtraceClk),
+ .OUTPUT_CLK (0),
+ .OUTPUT_ENABLE (0),
+ .D_OUT_0 (1'bz),
+ .D_OUT_1 (1'bz),
  .D_IN_0 (tTraceDina[2]),
  .D_IN_1 (tTraceDinb[2])
  );
@@ -84,7 +110,13 @@ SB_IO #(.PULLUP(0)) MtraceIn2
 SB_IO #(.PULLUP(0)) MtraceIn3 
 (
  .PACKAGE_PIN (traceDin[3]),
+ .LATCH_INPUT_VALUE (1),
+ .CLOCK_ENABLE (1),
  .INPUT_CLK (BtraceClk),
+ .OUTPUT_CLK (0),
+ .OUTPUT_ENABLE (0),
+ .D_OUT_0 (1'bz),
+ .D_OUT_1 (1'bz),
  .D_IN_0 (tTraceDina[3]),
  .D_IN_1 (tTraceDinb[3])
  );
@@ -122,7 +154,7 @@ SB_IO #(.PULLUP(0)) MtraceIn3
 
   // -----------------------------------------------------------------------------------------
 
-   reg [7:0] 		    filter_data;
+   wire [7:0] 		    filter_data;
 
    wire 		    dataAvail;
    wire 		    dataReady;
@@ -176,6 +208,7 @@ SB_IO #(.PULLUP(0)) MtraceIn3
 
   // -----------------------------------------------------------------------------------------   
  // Set up clock for 48Mhz with input of 12MHz
+   `ifndef SIMULATION
    SB_PLL40_CORE #(
 		   .FEEDBACK_PATH("SIMPLE"),
 		   .PLLOUT_SELECT("GENCLK"),
@@ -190,6 +223,10 @@ SB_IO #(.PULLUP(0)) MtraceIn3
 			  .REFERENCECLK(clkIn),
 			  .PLLOUTCORE(clkOut)
 			  );
+   `else // ifndef SIMULATION
+   assign lock = inject_pll_lock;
+   assign clkOut = inject_pll_clk48;
+   `endif // ifndef SIMULATION
 
    reg [25:0] 		   clkCount;
 
@@ -197,17 +234,17 @@ SB_IO #(.PULLUP(0)) MtraceIn3
      begin
 	if (rst)
 	  begin
-	     D5<=1'b0;
-	     D4<=1'b0;
 	     D3<=1'b0;
+	     D4<=1'b0;
+	     D5<=1'b0;
 	     D6<=1'b0;
 	     cts<=1'b0;
 	     clkCount <= 0;
 	  end
-	else
+	else // if (rst)
 	  begin	  
 	     clkCount <= clkCount + 1;
 	     D6<=clkCount[25];
-	  end // else: !if(rst)
+	  end
      end
 endmodule // topLevel

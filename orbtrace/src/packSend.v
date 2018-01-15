@@ -17,7 +17,7 @@ module packSend (
 		input 	     PacketCommit, // Flag indicating packet is complete and can be processed
 		
 		// Upwards interface to serial (or other) handler
-		output [7:0] DataVal, // Output data value
+		output reg [7:0] DataVal, // Output data value
 		input 	     DataNext, // Request for next data element
 		output reg   DataReady,
 		
@@ -41,7 +41,7 @@ module packSend (
 
    reg [1:0] 			 queueState;       // State of the queuing mechanism
    reg 				 odd;              // Indicator of if even or add byte is being presented to uppoer level
-   reg 				 PacketCommitSynced;
+   wire				 PacketCommitSynced;
    reg [10:0] 			 syncPktInterval;
  			 
    reg [1:0] 			 syncOfs;
@@ -147,7 +147,7 @@ Signal_CrossDomain s (
 	  begin
 	     if (PacketCommitSynced) outputWp<=outputWpNext;
 	     
-	     DataVal<=(odd)?opbuffmem[outputRp][15:8]:opbuffmem[outputRp][7:0];
+	     DataVal <= (odd)?opbuffmem[outputRp][15:8]:opbuffmem[outputRp][7:0];
 	     	     
 	     // Check to see if anyone is asking us for data
 	     if (DataNext) 
