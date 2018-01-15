@@ -4,7 +4,7 @@ SUPPORTED_HARDWARE=ICE40HX8K_B_EVN ICE40HX1K_STICK_EVN
 TRACEIF_SOURCES=toplevel.v uart.v traceIF.v packSend.v flagSync.v
 TESTBENCH_SOURCES=testbench.v
 
-.PHONY: all clean $(SUPPORTED_HARDWARE) simulate
+.PHONY: all clean $(SUPPORTED_HARDWARE) simulate simulate_and_watch
 
 # supporting rules:
 
@@ -41,6 +41,9 @@ testbench: $(TESTBENCH_SOURCES) $(TRACEIF_SOURCES)
 
 simulate: testbench
 	./testbench
+
+simulate_and_watch: simulate
+	# reload waveform with CTRL + SHIFT + R
 	gtkwave testbench_output.vcd
 
 # bitmap conversion stage:
