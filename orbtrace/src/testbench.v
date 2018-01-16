@@ -90,37 +90,21 @@ module testbench();
 	endtask
 
 	task setTrace1;
+		// expects to start with clk low.
 		parameter dataWidth = 16;
 		input [dataWidth-1:0] data;
 		integer i;
 		begin
-			for(i = dataWidth-1; i >= 0; i=i-1) begin
-				setTracePortStimulus({ 1'b0, 1'b0, 1'b0, data[i] });
+			for(i = 0; i < dataWidth; i = i+2) begin
+				setTracePortStimulus({ 1'b0, 1'b0, 1'b0, data[i]   }); // rising edge
+				setTracePortStimulus({ 1'b0, 1'b0, 1'b0, data[i+1] }); // falling edge
 			end
 		end
 	endtask
 
-	task setTrace2;
-		parameter dataWidth = 16;
-		input [dataWidth-1:0] data;
-		integer i;
-		begin
-			for(i = dataWidth-1; i >= 0; i=i-1) begin
-				setTracePortStimulus({ 1'b0, 1'b0, data[i+1], data[i] });
-			end
-		end
-	endtask
+	// task setTrace2; // TODO
 
-	task setTrace4;
-		parameter dataWidth = 16;
-		input [dataWidth-1:0] data;
-		integer i;
-		begin
-			for(i = dataWidth-1; i >= 0; i=i-1) begin
-				setTracePortStimulus({ data[i+3], data[i+2], data[i+1], data[i] });
-			end
-		end
-	endtask
+	// task setTrace4; // TODO
 
 	initial begin
 		traceDin <= 4'b0000;
@@ -132,15 +116,15 @@ module testbench();
 		traceClk <= 1'b1;
 		#1000;
 
+		traceClk <= 1'b0;
+		#50;
 		rst = 1'b0;
 		#50;
-		traceClk <= 1'b0;
-		#1000;
 
-		`define TRACEWIDTH 1
+		#2000;
 
-		setTrace1(16'h0123);
-		setTrace1(16'h0123);
+		setTrace1(16'haa55);
+		setTrace1(16'haa55);
 		setTrace1(16'h0123);
 		setTrace1(16'h0123);
 
