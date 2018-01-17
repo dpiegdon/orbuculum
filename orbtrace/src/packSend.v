@@ -17,7 +17,7 @@ module packSend (
 		input 	     PacketCommit, // Flag indicating packet is complete and can be processed
 		
 		// Upwards interface to serial (or other) handler : clk Clock
-		output reg [9:0] DataVal, // Output data value
+		output reg [7:0] DataVal, // Output data value
 		input 	     DataNext, // Request for next data element
 		output reg   DataReady,
 		
