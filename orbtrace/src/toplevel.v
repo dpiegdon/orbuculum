@@ -68,11 +68,11 @@ SB_GB_IO #(.PIN_TYPE(6'b000001)) BtraceClk0
 SB_IO #(.PULLUP(0)) MtraceIn0
 (
  .PACKAGE_PIN (traceDin[0]),
- .LATCH_INPUT_VALUE (1),
- .CLOCK_ENABLE (1),
+ .LATCH_INPUT_VALUE (1'b1),
+ .CLOCK_ENABLE (1'b1),
  .INPUT_CLK (BtraceClk),
- .OUTPUT_CLK (0),
- .OUTPUT_ENABLE (0),
+ .OUTPUT_CLK (1'b0),
+ .OUTPUT_ENABLE (1'b0),
  .D_OUT_0 (1'bz),
  .D_OUT_1 (1'bz),
  .D_IN_0 (tTraceDina[0]),
@@ -82,11 +82,11 @@ SB_IO #(.PULLUP(0)) MtraceIn0
 SB_IO #(.PULLUP(0)) MtraceIn1
 (
  .PACKAGE_PIN (traceDin[1]),
- .LATCH_INPUT_VALUE (1),
- .CLOCK_ENABLE (1),
+ .LATCH_INPUT_VALUE (1'b1),
+ .CLOCK_ENABLE (1'b1),
  .INPUT_CLK (BtraceClk),
- .OUTPUT_CLK (0),
- .OUTPUT_ENABLE (0),
+ .OUTPUT_CLK (1'b0),
+ .OUTPUT_ENABLE (1'b0),
  .D_OUT_0 (1'bz),
  .D_OUT_1 (1'bz),
  .D_IN_0 (tTraceDina[1]),
@@ -96,11 +96,11 @@ SB_IO #(.PULLUP(0)) MtraceIn1
 SB_IO #(.PULLUP(0)) MtraceIn2
 (
  .PACKAGE_PIN (traceDin[2]),
- .LATCH_INPUT_VALUE (1),
- .CLOCK_ENABLE (1),
+ .LATCH_INPUT_VALUE (1'b1),
+ .CLOCK_ENABLE (1'b1),
  .INPUT_CLK (BtraceClk),
- .OUTPUT_CLK (0),
- .OUTPUT_ENABLE (0),
+ .OUTPUT_CLK (1'b0),
+ .OUTPUT_ENABLE (1'b0),
  .D_OUT_0 (1'bz),
  .D_OUT_1 (1'bz),
  .D_IN_0 (tTraceDina[2]),
@@ -110,11 +110,11 @@ SB_IO #(.PULLUP(0)) MtraceIn2
 SB_IO #(.PULLUP(0)) MtraceIn3 
 (
  .PACKAGE_PIN (traceDin[3]),
- .LATCH_INPUT_VALUE (1),
- .CLOCK_ENABLE (1),
+ .LATCH_INPUT_VALUE (1'b1),
+ .CLOCK_ENABLE (1'b1),
  .INPUT_CLK (BtraceClk),
- .OUTPUT_CLK (0),
- .OUTPUT_ENABLE (0),
+ .OUTPUT_CLK (1'b0),
+ .OUTPUT_ENABLE (1'b0),
  .D_OUT_0 (1'bz),
  .D_OUT_1 (1'bz),
  .D_IN_0 (tTraceDina[3]),
@@ -140,7 +140,7 @@ SB_IO #(.PULLUP(0)) MtraceIn3
                    .traceDina(tTraceDina),       // Tracedata rising edge ... 1-n bits
                    .traceDinb(tTraceDinb),       // Tracedata falling edge (LSB) ... 1-n bits		   
                    .traceClkin(BtraceClk),       // Tracedata clock
-		   .width(4),                    // Current trace buffer width 
+		   .width(3'h4),                 // Current trace buffer width 
 
 		   // Upwards interface to packet processor
 		   .WdAvail(wdavail),            // Flag indicating word is available
