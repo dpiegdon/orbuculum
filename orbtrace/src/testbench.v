@@ -20,7 +20,7 @@ module testbench();
 
 	reg  [3:0] traceDin   = 4'b0000;
 	reg        traceClk   = 1'b0;
-	reg        uartrx     = 1'b0;
+	reg        uartrx     = 1'b1;
 	wire       uarttx;
 	wire       sync_led;
 	wire       rxInd_led;
