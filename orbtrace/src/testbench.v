@@ -18,7 +18,7 @@ module testbench();
 		//  and add a proper UART decoder at 12 MHz.
 	end
 
-	reg  [3:0] traceDin   = 4'b0000;
+	reg  [3:0] traceDin   = 4'bxxxx;
 	reg        traceClk   = 1'b0;
 	reg        uartrx     = 1'b1;
 	wire       uarttx;
@@ -79,11 +79,16 @@ module testbench();
 	task setTracePortStimulus;
 		input [3:0] data;
 		begin
+			// setup
 			traceDin <= data;
-			#50;			// setup
+			#50;
+			// clock
 			traceClk <= ~traceClk;
-			#50;			// hold
-			#900;			// remainder of clock cycle
+			// hold
+			#50;
+			traceDin <= 4'bzzzz;
+			// remainder
+			#400;
 		end
 	endtask
 
@@ -127,22 +132,43 @@ module testbench();
 	endtask
 
 	initial begin
-		traceDin <= 4'b0000;
-		traceClk <= 1'b0;
-		#1000;
+		#500;
 
+		// clock
+		traceClk <= ~traceClk;
+		// remainder
+		#500;
+
+		// clock
+		traceClk <= ~traceClk;
+		// remainder
+		#450;
+
+		// setup
 		rst = 1'b1;
+		traceDin <= 0;
 		#50;
-		traceClk <= 1'b1;
-		#1000;
+		// clock
+		traceClk <= ~traceClk;
+		// hold
+		#50;
+		traceDin <= 4'bzzzz;
+		// remainder
+		#450;
 
-		traceClk <= 1'b0;
+		// clock
+		traceClk <= ~traceClk;
 		#50;
 		rst = 1'b0;
-		#50;
+		// remainder
+		#450;
 
-		#2000;
+		// clock
+		traceClk <= ~traceClk;
+		// remainder
+		#450;
 
+		// random trace data at beginning
 		setTrace4(8'haa);
 		setTrace4(8'h55);
 		setTrace4(8'haa);
@@ -269,7 +295,7 @@ module testbench();
 		setTrace4(8'h7f);
 
 
-		#10000;
+		#20000;
 		$display("simulation completed");
 		$finish;
 	end
