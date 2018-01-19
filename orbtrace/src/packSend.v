@@ -4,23 +4,23 @@
 // ========
 //
 module packSend (
-		input 	     clk, // System Clock
-		input 	     rst, // Clock synchronised reset
+		input 	     clk,		// System Clock
+		input 	     rst,		// Clock synchronised reset
 		
-		input 	     sync, // Indicator of if we are in sync
+		input 	     sync,		// Indicator of if we are in sync
 		
 	        // Downwards interface to packet processor : wrClk Clock
-		input 	     wrClk, // Clock for write side operations to fifo
-		input 	     WdAvail, // Flag indicating word is available
-		input 	     PacketReset, // Flag indicating to start again
-		input [15:0] PacketWd, // The next packet word
+		input 	     wrClk,		// Clock for write side operations to fifo
+		input 	     WdAvail,		// Flag indicating word is available
+		input 	     PacketReset,	// Flag indicating to start again
+		input [15:0] PacketWd,		// The next packet word
 
 		// Upwards interface to serial (or other) handler : clk Clock
-		output reg [7:0] DataVal, // Output data value
-		input 	     DataNext, // Request for next data element
-		output reg   DataReady,
+		output reg [7:0] DataVal = 0,	// Output data value
+		input 	     DataNext,		// Request for next data element
+		output reg   DataReady   = 0,
 		
-		output 	     DataOverf // Too much data in buffer
+		output 	     DataOverf		// Too much data in buffer
  		);
 
    // Internals ==============================================================================
@@ -29,31 +29,31 @@ module packSend (
    reg [15:0] 			 opbuffmem[0:(2**BUFFLENLOG2)-1]; // Output buffer packet memory
 
    // DomB (System clk domain) registers
-   reg [BUFFLENLOG2-1:0]	 outputRp;         // Read Element position in output buffer
-   reg [BUFFLENLOG2-1:0] 	 outputRpPostBox;  // Postbox for output RP
-   reg [BUFFLENLOG2-1:0] 	 outputRpDomA;     // Second clock domain copy of RP
-   reg [1:0] 			 tickA2B;
-   reg 				 tickA;
-   reg 				 lastTickB;
+   reg [BUFFLENLOG2-1:0]	 outputRp	  = 0;  // Read Element position in output buffer
+   reg [BUFFLENLOG2-1:0] 	 outputRpPostBox  = 0;  // Postbox for output RP
+   reg [BUFFLENLOG2-1:0] 	 outputRpDomA	  = 0;  // Second clock domain copy of RP
+   reg [1:0] 			 tickA2B	  = 0;
+   reg 				 tickA		  = 0;
+   reg 				 lastTickB	  = 0;
    
 
    // DomA (Target clk domain) registers
-   reg [BUFFLENLOG2-1:0]	 outputWp;         // Write Element position in output buffer
-   reg [BUFFLENLOG2-4:0]	 outputWpPostBox;  // Postbox for output WP
-   reg [BUFFLENLOG2-4:0] 	 outputWpDomB;     // Second clock domain copy of WP
-   reg [1:0] 			 tickB2A;
-   reg 				 tickB;
-   reg 				 lastTickA;
+   reg [BUFFLENLOG2-1:0]	 outputWp	  = 0;  // Write Element position in output buffer
+   reg [BUFFLENLOG2-4:0]	 outputWpPostBox  = 0;  // Postbox for output WP
+   reg [BUFFLENLOG2-4:0] 	 outputWpDomB	  = 0;  // Second clock domain copy of WP
+   reg [1:0] 			 tickB2A	  = 0;
+   reg 				 tickB		  = 0;
+   reg 				 lastTickA	  = 0;
    
-   reg [BUFFLENLOG2-1:0] 	 opN;              // Output next value
+   reg [BUFFLENLOG2-1:0] 	 opN		  = 0;  // Output next value
 
-   reg  			 ovfSet;           // Cross domain flag for ovfStretch
-   reg [25:0] 			 ovfStretch;       // LED stretch for overflow indication
+   reg  			 ovfSet		  = 0;  // Cross domain flag for ovfStretch
+   reg [25:0] 			 ovfStretch	  = 0;  // LED stretch for overflow indication
 
-   reg 				 odd;              // Indicator of if even or add byte is being presented to upper level
+   reg 				 odd		  = 0;  // Indicator of if even or add byte is being presented to upper level
    
-   reg [16:0]                    syncArm;          // Interval countdown for sending sync pulses for keepalive
-   reg [1:0] 			 syncSending;      // Current state of sync sending process
+   reg [16:0]                    syncArm	  = 0;  // Interval countdown for sending sync pulses for keepalive
+   reg [1:0] 			 syncSending	  = 0;  // Current state of sync sending process
 
    // ======= Write data to RAM using source domain clock =================================================
    always @(posedge wrClk) // Clock Domain A : From the target

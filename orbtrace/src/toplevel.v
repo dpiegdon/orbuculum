@@ -26,14 +26,11 @@ module topLevel(
 		input 	    rstIn,
 
 		// Other indicators
-		output reg  D6,
-		output reg  D5,
-		output reg  D4,
-		output reg  D3,
-		output reg  cts
-//		,output 	    yellow
-//		,output 	    green
-//		,output      blue	    
+		output reg  D6  = 0,
+		output reg  D5  = 0,
+		output reg  D4  = 0,
+		output reg  D3  = 0,
+		output reg  cts = 0
 		);      
 	    
    // Parameters =============================================================================
@@ -225,7 +222,7 @@ SB_IO #(.PULLUP(1)) MtraceIn3
    assign clkOut = inject_pll_clk48;
    `endif // ifndef SIMULATION
 
-   reg [25:0] 		   clkCount;
+   reg [25:0] 		   clkCount = 0;
 
    // We don't want anything awake until the clocks are stable
    assign rst=(lock&rstIn);

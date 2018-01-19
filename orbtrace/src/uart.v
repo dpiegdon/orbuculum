@@ -24,18 +24,18 @@
 // 
 
 module uart(
-	    input 	 clk, // The master clock for this module
-	    input 	 rst, // Synchronous reset.
-	    input 	 rx, // Incoming serial line
-	    output reg	 tx, // Outgoing serial line
-	    input 	 transmit, // Signal to transmit
-	    input [7:0]  tx_byte, // Byte to transmit
-	    output 	 received, // Indicated that a byte has been received.
-	    output  	 tx_free, // Indicator that transmit register is available
-	    output [7:0] rx_byte, // Byte received
-	    output 	 is_receiving, // Low when receive line is idle.
-	    output 	 is_transmitting, // Low when transmit line is idle.
-	    output 	 recv_error // Indicates error in receiving packet.
+	    input 	 clk,			// The master clock for this module
+	    input 	 rst,			// Synchronous reset.
+	    input 	 rx,			// Incoming serial line
+	    output reg	 tx		= 0,	// Outgoing serial line
+	    input 	 transmit,		// Signal to transmit
+	    input [7:0]  tx_byte,		// Byte to transmit
+	    output 	 received,		// Indicated that a byte has been received.
+	    output  	 tx_free,		// Indicator that transmit register is available
+	    output [7:0] rx_byte,		// Byte received
+	    output 	 is_receiving,		// Low when receive line is idle.
+	    output 	 is_transmitting,	// Low when transmit line is idle.
+	    output 	 recv_error		// Indicates error in receiving packet.
 	    );
    
    parameter CLOCKFRQ=48_000_000;                   // Frequency of the oscillator
@@ -60,21 +60,21 @@ module uart(
    parameter TX_IDLE = 1'd0;
    parameter TX_SENDING = 1'd1;
    
-   reg [12:0] 		 rx_clk_divider;
-   reg [12:0] 		 tx_clk_divider;
+   reg [12:0] 		 rx_clk_divider		= CLOCK_DIVIDE;
+   reg [12:0] 		 tx_clk_divider		= CLOCK_DIVIDE;
    
-   reg [2:0] 		 recv_state;
-   reg [5:0] 		 rx_countdown;
-   reg [3:0] 		 rx_bits_remaining;
-   reg [7:0] 		 rx_data;
+   reg [2:0] 		 recv_state		= RX_IDLE;
+   reg [5:0] 		 rx_countdown		= 0;
+   reg [3:0] 		 rx_bits_remaining	= 0;
+   reg [7:0] 		 rx_data		= 0;
    
-   reg  		 tx_state;
-   reg [5:0] 		 tx_countdown;
-   reg [3:0] 		 tx_bits_remaining;
-   reg [7:0] 		 tx_data;
+   reg  		 tx_state		= TX_IDLE;
+   reg [5:0] 		 tx_countdown		= 0;
+   reg [3:0] 		 tx_bits_remaining	= 0;
+   reg [7:0] 		 tx_data		= 0;
    
-   reg [16:0] 		 tx_ledstretch;
-   reg [16:0] 		 rx_ledstretch;
+   reg [16:0] 		 tx_ledstretch		= 0;
+   reg [16:0] 		 rx_ledstretch		= 0;
    
    assign is_receiving = (rx_ledstretch != 0); 
    assign is_transmitting = (tx_ledstretch != 0);

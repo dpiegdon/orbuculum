@@ -13,42 +13,39 @@ module traceIF # (parameter BUSWIDTH = 4) (
 		input 		     rst, // Reset synchronised to clock
 
 	// Downwards interface to the trace pins
-		input [BUSWIDTH-1:0] traceDina, // Tracedata rising edge... 1-n bits max, can be less
-		input [BUSWIDTH-1:0] traceDinb, // Tracedata falling edge... 1-n bits max, can be less	
-		input 		     traceClkin, // Tracedata clock... async to clk
-		input [2:0] 	     width, // How wide the bus under consideration is 1..4 (0, 3 & >4 invalid)
+		input [BUSWIDTH-1:0] traceDina,        // Tracedata rising edge... 1-n bits max, can be less
+		input [BUSWIDTH-1:0] traceDinb,        // Tracedata falling edge... 1-n bits max, can be less	
+		input 		     traceClkin,       // Tracedata clock... async to clk
+		input [2:0] 	     width,            // How wide the bus under consideration is 1..4 (0, 3 & >4 invalid)
 
 	// Upwards interface to packet processor
-		output reg 	     WdAvail, // Flag indicating word is available
-		output reg [15:0]    PacketWd, // The next packet word
-		output reg 	     PacketReset, // Flag indicating to start again
-
-		output reg	     sync // Indicator that we are in sync
+		output reg 	     WdAvail     = 0,  // Flag indicating word is available
+		output reg [15:0]    PacketWd    = 0,  // The next packet word
+		output reg 	     PacketReset = 0,  // Flag indicating to start again
+		output reg	     sync        = 0   // Indicator that we are in sync
 		);		  
    
    // Internals =============================================================================
 
-   reg [35:0] 	construct;                // Track of data being constructed (extra bits for mis-sync)
-   reg [4:0] 	readBits;                 // How many bits of the sample we have
+   reg [35:0] 	construct = 0;            // Track of data being constructed (extra bits for mis-sync)
+   reg [4:0] 	readBits  = 0;            // How many bits of the sample we have
    
-   reg [1:0] 	gotSync;                  // Pulse stretch between domains for sync
-   reg 		prevSync;
-   
-   
-   reg [23:0] 	lostSync;                 // Counter for sync loss timeout
+   reg [1:0] 	gotSync   = 0;            // Pulse stretch between domains for sync
+   reg 		prevSync  = 0;
+   reg [23:0] 	lostSync  = 0;            // Counter for sync loss timeout
+   reg		newSync   = 0;            // Indicator that sync has been discovered
 
    reg [2:0] 	offset;                   // Offset in sync process
    reg [15:0] 	extract;
    
-   reg		newSync;                  // Indicator that sync has been discovered
 
    // ================== Input data against traceclock from target system ====================
    always @(posedge traceClkin)
      begin
 	if (rst)
 	  begin
-	     readBits<=0;
 	     construct<=0;
+	     readBits<=0;
 	     gotSync<=0;
 	     WdAvail<=0;
 	     PacketReset<=0;
