@@ -131,169 +131,152 @@ module testbench();
 		end
 	endtask
 
+	task sendHalfFrame;
+		begin
+			setTrace4(8'haa);
+			setTrace4(8'h55);
+			setTrace4(8'haa);
+			setTrace4(8'h55);
+			setTrace4(8'h66);
+			setTrace4(8'h99);
+			setTrace4(8'h66);
+			setTrace4(8'h99);
+		end
+	endtask
+
+	task sendFrame;
+		begin
+			// valid 128 bits
+			setTrace4(8'h01);
+			setTrace4(8'h23);
+			setTrace4(8'h45);
+			setTrace4(8'h67);
+			setTrace4(8'h89);
+			setTrace4(8'hab);
+			setTrace4(8'hcd);
+			setTrace4(8'hef);
+			setTrace4(8'h01);
+			setTrace4(8'h23);
+			setTrace4(8'h45);
+			setTrace4(8'h67);
+			setTrace4(8'h89);
+			setTrace4(8'hab);
+			setTrace4(8'hcd);
+			setTrace4(8'hef);
+		end
+	endtask
+
+	task sendSync;
+		begin
+			setTrace4(8'hff);
+			setTrace4(8'hff);
+			setTrace4(8'hff);
+			setTrace4(8'hff);
+			setTrace4(8'hff);
+			setTrace4(8'hff);
+			setTrace4(8'hff);
+			setTrace4(8'h7f);
+		end
+	endtask
+
+	task sendSyncedFrame;
+		begin
+			sendSync();
+			sendFrame();
+		end
+	endtask
+
+	task initWithoutReset;
+		begin
+			#500;
+
+			traceClk <= ~traceClk;
+			#500;
+
+			traceClk <= ~traceClk;
+			#450;
+
+			traceDin <= 0;
+			#50;
+			traceClk <= ~traceClk;
+			#50;
+			traceDin <= 4'bzzzz;
+			#450;
+
+			traceClk <= ~traceClk;
+			#500;
+
+			traceClk <= ~traceClk;
+			#450;
+		end
+	endtask
+
+	task initWithReset;
+		begin
+			#500;
+
+			traceClk <= ~traceClk;
+			#500;
+
+			traceClk <= ~traceClk;
+			#450;
+
+			rst = 1'b1;
+			traceDin <= 0;
+			#50;
+			traceClk <= ~traceClk;
+			#50;
+			traceDin <= 4'bzzzz;
+			#450;
+
+			traceClk <= ~traceClk;
+			#50;
+			rst = 1'b0;
+			#450;
+
+			traceClk <= ~traceClk;
+			#450;
+		end
+	endtask
+
 	initial begin
-		#500;
+		initWithoutReset();
 
-		// clock
-		traceClk <= ~traceClk;
-		// remainder
-		#500;
+		sendHalfFrame();
 
-		// clock
-		traceClk <= ~traceClk;
-		// remainder
-		#450;
+		sendSyncedFrame();
+		sendFrame();
 
-		// setup
-		rst = 1'b1;
-		traceDin <= 0;
-		#50;
-		// clock
-		traceClk <= ~traceClk;
-		// hold
-		#50;
-		traceDin <= 4'bzzzz;
-		// remainder
-		#450;
-
-		// clock
-		traceClk <= ~traceClk;
-		#50;
-		rst = 1'b0;
-		// remainder
-		#450;
-
-		// clock
-		traceClk <= ~traceClk;
-		// remainder
-		#450;
-
-		// random trace data at beginning
-		setTrace4(8'haa);
-		setTrace4(8'h55);
-		setTrace4(8'haa);
-		setTrace4(8'h55);
-		setTrace4(8'h01);
-		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-
-		// first sync
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'h7f);
-
-		// valid 128 bits
-		setTrace4(8'h01);
-		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-		setTrace4(8'h89);
-		setTrace4(8'hab);
-		setTrace4(8'hcd);
-		setTrace4(8'hef);
-		setTrace4(8'h01);
-		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-		setTrace4(8'h89);
-		setTrace4(8'hab);
-		setTrace4(8'hcd);
-		setTrace4(8'hef);
-
-		// another 128 bit
-		setTrace4(8'h01);
-		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-		setTrace4(8'h89);
-		setTrace4(8'hab);
-		setTrace4(8'hcd);
-		setTrace4(8'hef);
-		setTrace4(8'h01);
-		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-		setTrace4(8'h89);
-		setTrace4(8'hab);
-		setTrace4(8'hcd);
-		setTrace4(8'hef);
-
-		// next sync
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'h7f);
-
+		sendSync();
 		// bad stimulus
 		setTrace4(8'h01);
 		setTrace4(8'h23);
 
-		// resync
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'h7f);
+		sendSyncedFrame();
+		sendFrame();
+		sendFrame();
+		sendFrame();
 
-		// valid 128 bits
+
+		// now *with* a reset
+		#50;
+		traceClk = ~traceClk;
+		initWithReset();
+
+		sendHalfFrame();
+
+		sendSyncedFrame();
+		sendFrame();
+
+		sendSync();
+		// bad stimulus
 		setTrace4(8'h01);
 		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-		setTrace4(8'h89);
-		setTrace4(8'hab);
-		setTrace4(8'hcd);
-		setTrace4(8'hef);
-		setTrace4(8'h01);
-		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-		setTrace4(8'h89);
-		setTrace4(8'hab);
-		setTrace4(8'hcd);
-		setTrace4(8'hef);
 
-		// another 128 bit
-		setTrace4(8'h01);
-		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-		setTrace4(8'h89);
-		setTrace4(8'hab);
-		setTrace4(8'hcd);
-		setTrace4(8'hef);
-		setTrace4(8'h01);
-		setTrace4(8'h23);
-		setTrace4(8'h45);
-		setTrace4(8'h67);
-		setTrace4(8'h89);
-		setTrace4(8'hab);
-		setTrace4(8'hcd);
-		setTrace4(8'hef);
-
-		// another sync
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'hff);
-		setTrace4(8'h7f);
-
+		sendSyncedFrame();
+		sendFrame();
+		sendFrame();
+		sendFrame();
 
 		#20000;
 		$display("simulation completed");
