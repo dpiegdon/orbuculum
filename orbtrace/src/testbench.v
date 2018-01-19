@@ -18,18 +18,18 @@ module testbench();
 		//  and add a proper UART decoder at 12 MHz.
 	end
 
-	reg  [3:0] traceDin  = 4'b0000;
-	reg        traceClk  = 1'b0;
-	reg        uartrx    = 1'b0;
+	reg  [3:0] traceDin   = 4'b0000;
+	reg        traceClk   = 1'b0;
+	reg        uartrx     = 1'b0;
 	wire       uarttx;
 	wire       sync_led;
 	wire       rxInd_led;
 	wire       txInd_led;
 	wire       txOvf_led;
-	reg        pll_clk48 = 1'b0;
+	reg        pll_clk48  = 1'b0;
 	reg        pll_locked = 1'b0;
-	reg        clk12     = 1'b0;
-	reg        rst       = 1'b0;
+	reg        clk12      = 1'b0;
+	reg        rst        = 1'b0;
 	wire       D6;
 	wire       D5;
 	wire       D4;
@@ -50,14 +50,12 @@ module testbench();
 		.clkIn(clk12),			//       in
 		.inject_pll_clk48(pll_clk48),	//       in
 		.inject_pll_lock(pll_locked),	//       in
-		.rst(rst),			//       in
+		.rstIn(rst),			//       in
 		.D6(D6),			//       out
 		.D5(D5),			//       out
 		.D4(D4),			//       out
 		.D3(D3),			//       out
-		.cts(cts),			//       out
-		.yellow(yellow),		//       out
-		.green(green)			//       out
+		.cts(cts)			//       out
 	);
 
 	// generate PLL clock and 12MHz system clock
