@@ -89,20 +89,42 @@ module testbench();
 
 	task setTrace1;
 		// expects to start with clk low.
-		parameter dataWidth = 16;
+		parameter dataWidth = 8;
 		input [dataWidth-1:0] data;
 		integer i;
 		begin
 			for(i = 0; i < dataWidth; i = i+2) begin
-				setTracePortStimulus({ 1'b0, 1'b0, 1'b0, data[i]   }); // rising edge
+				setTracePortStimulus({ 1'b0, 1'b0, 1'b0, data[i+0] }); // rising edge
 				setTracePortStimulus({ 1'b0, 1'b0, 1'b0, data[i+1] }); // falling edge
 			end
 		end
 	endtask
 
-	// task setTrace2; // TODO
+	task setTrace2;
+		// expects to start with clk low.
+		parameter dataWidth = 8;
+		input [dataWidth-1:0] data;
+		integer i;
+		begin
+			for(i = 0; i < dataWidth; i = i+4) begin
+				setTracePortStimulus({ 1'b0, 1'b0, data[i+1], data[i+0] }); // rising edge
+				setTracePortStimulus({ 1'b0, 1'b0, data[i+3], data[i+2] }); // falling edge
+			end
+		end
+	endtask
 
-	// task setTrace4; // TODO
+	task setTrace4;
+		// expects to start with clk low.
+		parameter dataWidth = 8;
+		input [dataWidth-1:0] data;
+		integer i;
+		begin
+			for(i = 0; i < dataWidth; i = i+8) begin
+				setTracePortStimulus({ data[i+3], data[i+2], data[i+1], data[i+0] }); // rising edge
+				setTracePortStimulus({ data[i+7], data[i+6], data[i+5], data[i+4] }); // falling edge
+			end
+		end
+	endtask
 
 	initial begin
 		traceDin <= 4'b0000;
@@ -121,36 +143,131 @@ module testbench();
 
 		#2000;
 
-		setTrace1(16'haa55);
-		setTrace1(16'haa55);
-		setTrace1(16'h0123);
-		setTrace1(16'h0123);
+		setTrace4(8'haa);
+		setTrace4(8'h55);
+		setTrace4(8'haa);
+		setTrace4(8'h55);
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
 
-		setTrace1(16'h7fff);
-		setTrace1(16'hffff);
-		setTrace1(16'hffff);
-		setTrace1(16'hffff);
+		// first sync
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'h7f);
 
-		setTrace1(16'h0123);
-		setTrace1(16'h4567);
-		setTrace1(16'h89ab);
-		setTrace1(16'hcdef);
-		setTrace1(16'h0123);
-		setTrace1(16'h4567);
-		setTrace1(16'h89ab);
-		setTrace1(16'hcdef);
+		// valid 128 bits
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
+		setTrace4(8'h89);
+		setTrace4(8'hab);
+		setTrace4(8'hcd);
+		setTrace4(8'hef);
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
+		setTrace4(8'h89);
+		setTrace4(8'hab);
+		setTrace4(8'hcd);
+		setTrace4(8'hef);
 
-		setTrace1(16'h7fff);
-		setTrace1(16'hffff);
-		setTrace1(16'hffff);
-		setTrace1(16'hffff);
+		// another 128 bit
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
+		setTrace4(8'h89);
+		setTrace4(8'hab);
+		setTrace4(8'hcd);
+		setTrace4(8'hef);
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
+		setTrace4(8'h89);
+		setTrace4(8'hab);
+		setTrace4(8'hcd);
+		setTrace4(8'hef);
 
-		setTrace1(16'h0123);
+		// next sync
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'h7f);
 
-		setTrace1(16'h7fff);
-		setTrace1(16'hffff);
-		setTrace1(16'hffff);
-		setTrace1(16'hffff);
+		// bad stimulus
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+
+		// resync
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'h7f);
+
+		// valid 128 bits
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
+		setTrace4(8'h89);
+		setTrace4(8'hab);
+		setTrace4(8'hcd);
+		setTrace4(8'hef);
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
+		setTrace4(8'h89);
+		setTrace4(8'hab);
+		setTrace4(8'hcd);
+		setTrace4(8'hef);
+
+		// another 128 bit
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
+		setTrace4(8'h89);
+		setTrace4(8'hab);
+		setTrace4(8'hcd);
+		setTrace4(8'hef);
+		setTrace4(8'h01);
+		setTrace4(8'h23);
+		setTrace4(8'h45);
+		setTrace4(8'h67);
+		setTrace4(8'h89);
+		setTrace4(8'hab);
+		setTrace4(8'hcd);
+		setTrace4(8'hef);
+
+		// another sync
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'hff);
+		setTrace4(8'h7f);
+
 
 		#10000;
 		$display("simulation completed");
