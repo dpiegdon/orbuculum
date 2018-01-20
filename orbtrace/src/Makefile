@@ -1,4 +1,14 @@
-RVAL ?= $$RANDOM
+
+# when set to zero arachne_pnr placement will be different each time
+# (can be used for timing analysis e.g.)
+REPRODUCIBLE_BUILD ?= 1
+ifeq ($(REPRODUCIBLE_BUILD),1)
+	RANDOMIZE_SEED=
+else
+	RANDOMIZE_SEED= -r
+endif
+
+
 SUPPORTED_HARDWARE=ICE40HX8K_B_EVN ICE40HX1K_STICK_EVN
 
 TRACEIF_SOURCES=toplevel.v uart.v traceIF.v packSend.v flagSync.v
@@ -54,7 +64,7 @@ simulate_and_watch: simulate
 # place and route stage:
 
 %.asc:
-	arachne-pnr -s $(RVAL) -m 800 -d $(subst hx,,$(subst lp,,$(DEVICE))) -P $(PACKAGE) -p $(subst .asc,.pcf,$@) $< -o $@
+	arachne-pnr $(RANDOMIZE_SEED) -m 800 -d $(subst hx,,$(subst lp,,$(DEVICE))) -P $(PACKAGE) -p $(subst .asc,.pcf,$@) $< -o $@
 	icetime -d $(DEVICE) $@
 
 ICE40HX1K_STICK_EVN.asc: DEVICE := hx1k
