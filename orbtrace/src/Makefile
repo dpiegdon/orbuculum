@@ -55,6 +55,7 @@ simulate_and_watch: simulate
 
 %.asc:
 	arachne-pnr -s $(RVAL) -m 800 -d $(subst hx,,$(subst lp,,$(DEVICE))) -P $(PACKAGE) -p $(subst .asc,.pcf,$@) $< -o $@
+	icetime -d $(DEVICE) $@
 
 ICE40HX1K_STICK_EVN.asc: DEVICE := hx1k
 ICE40HX1K_STICK_EVN.asc: PACKAGE := tq144
