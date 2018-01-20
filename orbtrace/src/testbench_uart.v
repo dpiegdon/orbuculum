@@ -4,14 +4,16 @@
 
 module testbench();
 	initial begin
-		$dumpfile("testbench_output.vcd");
+		$dumpfile("testbench_uart.vcd");
 		$dumpvars();
-	end
-
-	// simulation lifespan
-	initial begin
-		#20000000
-		$finish;
+		//  it is actually possible to just extract the uart output
+		//  and decode it in pulseview, the GUI of sigrok. to do so,
+		//  use this:
+		//$dumpvars(0, tx);
+		//  instead of the above (sigrok can't handle ALL signals).
+		//  then open the output in pulseview:
+		// 	pulseview -I vcd testbench_uart.vcd
+		//  and add a proper UART decoder at 250 KHz.
 	end
 
 	reg		clk		= 1'b0;
@@ -28,9 +30,26 @@ module testbench();
 	wire		recv_error;
 
 	reg		dut_transceive_error = 1'b0;
-	reg		dut_final_result_success = 1'b0;
-	reg		dut_final_result_valid = 1'b0;
+	reg		dut_final_result_success = 1'bx;
+	reg		dut_final_result_valid = 1'bx;
 
+	// simulation lifespan and result analysis
+	initial begin
+		#30000000
+
+		$write("testbench_uart result: ");
+		if( dut_final_result_valid ) begin
+			if( dut_final_result_success ) begin
+				$display("SUCCESS");
+			end else begin
+				$display("ERROR");
+			end
+		end else begin
+			$display("INCONCLUSIVE");
+		end
+
+		$finish;
+	end
 
 	// device under test
 	uart #(.CLOCKFRQ(1_000_000), .BAUDRATE(250_000)) dut (
@@ -60,7 +79,7 @@ module testbench();
 		#10000;
 		for(i = 0; i < 256; i = i+1) begin
 			while(~tx_free) begin
-				#5000; // #1000
+				#1500;
 			end
 			tx_byte <= i[7:0];
 			transmit <= 1;
@@ -69,12 +88,12 @@ module testbench();
 			#1000;
 		end
 		#1000;
-		i = 0;
+		i = 1;
 	end
 
 	// delay for uart signal
 	always @(posedge clk) begin
-		rx <= #10000000 tx;
+		rx <= #15000000 tx;
 	end
 
 	// receiver

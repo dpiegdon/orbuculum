@@ -12,9 +12,8 @@ endif
 SUPPORTED_HARDWARE=ICE40HX8K_B_EVN ICE40HX1K_STICK_EVN
 
 TRACEIF_SOURCES=toplevel.v uart.v traceIF.v packSend.v flagSync.v
-TESTBENCH_SOURCES=testbench.v
 
-.PHONY: all clean $(SUPPORTED_HARDWARE) simulate simulate_and_watch
+.PHONY: all clean $(SUPPORTED_HARDWARE) simulate
 
 # supporting rules:
 
@@ -38,23 +37,28 @@ clean:
 	-rm -f *.blif
 	-rm -f *.asc
 	-rm -f *.bin
+	-rm -f *.vvp
 	-rm -f *.vcd
-	-rm -f testbench
 
 $(SUPPORTED_HARDWARE):%:%.bin
 	iceprog -S $<
 
 # simulation stage:
 
-testbench: $(TESTBENCH_SOURCES) $(TRACEIF_SOURCES)
-	iverilog -D NO_GB_IO_AVAILABLE -D SIMULATION -o $@ `yosys-config --datdir/ice40/cells_sim.v` $^
+testbench_%.vvp:
+	iverilog ${IVERILOG_FLAGS} -D SIMULATION -o $@ $^
 
-simulate: testbench
-	./testbench
+testbench_toplevel.vvp: IVERILOG_FLAGS=-D NO_GB_IO_AVAILABLE
+testbench_toplevel.vvp: testbench_toplevel.v $(TRACEIF_SOURCES) $(shell yosys-config --datdir/ice40/cells_sim.v)
 
-simulate_and_watch: simulate
-	# reload waveform with CTRL + SHIFT + R
-	gtkwave testbench_output.vcd
+testbench_uart.vvp: testbench_uart.v uart.v
+
+%.vcd: %.vvp
+	@echo ""
+	vvp $^
+	@echo ""
+
+simulate: testbench_toplevel.vcd testbench_uart.vcd
 
 # bitmap conversion stage:
 

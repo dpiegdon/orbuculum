@@ -1,5 +1,5 @@
 *.blif
 *.asc
 *.bin
+*.vvp
 *.vcd
-testbench

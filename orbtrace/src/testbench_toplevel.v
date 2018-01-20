@@ -5,16 +5,15 @@
 module testbench();
 
 	initial begin
-		$dumpfile("testbench_output.vcd");
+		$dumpfile("testbench_toplevel.vcd");
 		$dumpvars();
 		//  it is actually possible to just extract the uart output
 		//  and decode it in pulseview, the GUI of sigrok. to do so,
 		//  use this:
-		//$dumpfile("testbench_uart.vcd");
 		//$dumpvars(0, uarttx);
 		//  instead of the above (sigrok can't handle ALL signals).
 		//  then open the output in pulseview:
-		// 	pulseview -I vcd testbench_output.vcd
+		// 	pulseview -I vcd testbench_toplevel.vcd
 		//  and add a proper UART decoder at 12 MHz.
 	end
 
@@ -279,7 +278,7 @@ module testbench();
 		sendFrame();
 
 		#20000;
-		$display("simulation completed");
+		$display("testbench_toplevel: simulation completed.");
 		$finish;
 	end
 
