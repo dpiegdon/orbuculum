@@ -30,7 +30,9 @@ module topLevel(
 		output reg  D5  = 0,
 		output reg  D4  = 0,
 		output reg  D3  = 0,
-		output reg  cts = 0
+		output reg  cts = 0,
+		output reg  yellow = 0,
+		output reg  green = 0
 		);      
 	    
    // Parameters =============================================================================
@@ -55,7 +57,7 @@ SB_GB BtraceClk0 (
  );
 `else
 // Buffer for trace input clock
-SB_GB_IO #(.PIN_TYPE(6'b000001)) BtraceClk0
+SB_GB_IO #(.PIN_TYPE(6'b000000)) BtraceClk0
 (
   .PACKAGE_PIN(traceClk),
   .GLOBAL_BUFFER_OUTPUT(BtraceClk)
@@ -63,7 +65,7 @@ SB_GB_IO #(.PIN_TYPE(6'b000001)) BtraceClk0
 `endif
 
 // Trace input pins config   
-SB_IO #(.PULLUP(1)) MtraceIn0
+SB_IO #(.PULLUP(1), .PIN_TYPE(6'b0)) MtraceIn0
 (
  .PACKAGE_PIN (traceDin[0]),
  .LATCH_INPUT_VALUE (1'b1),
@@ -77,7 +79,7 @@ SB_IO #(.PULLUP(1)) MtraceIn0
  .D_IN_1 (tTraceDinb[0])
  );
    
-SB_IO #(.PULLUP(1)) MtraceIn1
+SB_IO #(.PULLUP(1), .PIN_TYPE(6'b0)) MtraceIn1
 (
  .PACKAGE_PIN (traceDin[1]),
  .LATCH_INPUT_VALUE (1'b1),
@@ -91,7 +93,7 @@ SB_IO #(.PULLUP(1)) MtraceIn1
  .D_IN_1 (tTraceDinb[1])
   );
    
-SB_IO #(.PULLUP(1)) MtraceIn2
+SB_IO #(.PULLUP(1), .PIN_TYPE(6'b0)) MtraceIn2
 (
  .PACKAGE_PIN (traceDin[2]),
  .LATCH_INPUT_VALUE (1'b1),
@@ -105,7 +107,7 @@ SB_IO #(.PULLUP(1)) MtraceIn2
  .D_IN_1 (tTraceDinb[2])
  );
    
-SB_IO #(.PULLUP(1)) MtraceIn3 
+SB_IO #(.PULLUP(1), .PIN_TYPE(6'b0)) MtraceIn3 
 (
  .PACKAGE_PIN (traceDin[3]),
  .LATCH_INPUT_VALUE (1'b1),
@@ -236,6 +238,8 @@ SB_IO #(.PULLUP(1)) MtraceIn3
 	     D5<=1'b0;
 	     D6<=1'b0;
 	     cts<=1'b0;
+	     yellow<=1'b0;
+	     green<=1'b0;
 	     clkCount <= 0;
 	  end
 	else // if (rst)

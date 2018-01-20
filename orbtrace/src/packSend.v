@@ -52,8 +52,8 @@ module packSend (
 
    reg 				 odd		  = 0;  // Indicator of if even or add byte is being presented to upper level
    
-   reg [16:0]                    syncArm	  = 0;  // Interval countdown for sending sync pulses for keepalive
-   reg [1:0] 			 syncSending	  = 0;  // Current state of sync sending process
+   reg [20:0]                    syncArm          = 0;  // Interval countdown for sending sync pulses for keepalive
+   reg [1:0] 			 syncSending      = 0;  // Current state of sync sending process
 
    // ======= Write data to RAM using source domain clock =================================================
    always @(posedge wrClk) // Clock Domain A : From the target
