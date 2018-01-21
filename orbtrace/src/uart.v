@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+`default_nettype none
 // Documented Verilog UART
 // Copyright (C) 2010 Timothy Goddard (tim@goddard.net.nz)
 // Distributed under the MIT licence.
@@ -25,26 +25,29 @@
 //
 // ChangeLog
 //	2017-11-22	revisited original upstream: https://opencores.org/project,osdvu
-//  			and adapted it to supply tx_free signal.
+//			and adapted it to supply tx_free signal.
 //
-//  			halved required clock cycles to support high baudrates
-//  			with low system clock.
+//			halved required clock cycles to support high baudrates
+//			with low system clock.
 //
-//  			set baudrate to upper limit of 12M. (limit is FT2232H)
+//			set baudrate to upper limit of 12M. (limit is FT2232H)
+//
+//	2018-01-21	Set proper defaults for all registers, so the core
+//			works without requiring an initial reset.
 //
 module uart(
-	input clk, // The master clock for this module
-	input rst, // Synchronous reset.
-	input rx, // Incoming serial line
-	output tx, // Outgoing serial line
-	input transmit, // Signal to transmit
-	output tx_free, // Transmitter is idle
-	input [7:0] tx_byte, // Byte to transmit
-	output received, // Indicated that a byte has been received.
-	output [7:0] rx_byte, // Byte received
-	output is_receiving, // Low when receive line is idle.
-	output is_transmitting, // Low when transmit line is idle.
-	output recv_error // Indicates error in receiving packet.
+	input		clk,			// The master clock for this module
+	input		rst,			// Synchronous reset.
+	input		rx,			// Incoming serial line
+	output		tx,			// Outgoing serial line
+	input		transmit,		// Signal to transmit
+	output		tx_free,		// Transmitter is idle
+	input [7:0]	tx_byte,		// Byte to transmit
+	output		received,		// Indicated that a byte has been received.
+	output [7:0]	rx_byte,		// Byte received
+	output		is_receiving,		// Low when receive line is idle.
+	output		is_transmitting,	// Low when transmit line is idle.
+	output		recv_error		// Indicates error in receiving packet.
 );
 
 parameter CLOCKFRQ=48_000_000; // Frequency of the oscillator
@@ -67,19 +70,19 @@ parameter TX_IDLE = 0;
 parameter TX_SENDING = 1;
 parameter TX_DELAY_RESTART = 2;
 
-reg [10:0] rx_clk_divider = CLOCK_DIVIDE;
-reg [10:0] tx_clk_divider = CLOCK_DIVIDE;
+reg [10:0]	rx_clk_divider		= CLOCK_DIVIDE;
+reg [10:0]	tx_clk_divider		= CLOCK_DIVIDE;
 
-reg [2:0] recv_state = RX_IDLE;
-reg [5:0] rx_countdown;
-reg [3:0] rx_bits_remaining;
-reg [7:0] rx_data;
+reg [2:0]	recv_state		= RX_IDLE;
+reg [5:0]	rx_countdown		= 0;
+reg [3:0]	rx_bits_remaining	= 0;
+reg [7:0]	rx_data			= 0;
 
-reg tx_out = 1'b1;
-reg [1:0] tx_state = TX_IDLE;
-reg [5:0] tx_countdown;
-reg [3:0] tx_bits_remaining;
-reg [7:0] tx_data;
+reg		tx_out			= 1'b1;
+reg [1:0]	tx_state		= TX_IDLE;
+reg [5:0]	tx_countdown		= 0;
+reg [3:0]	tx_bits_remaining	= 0;
+reg [7:0]	tx_data			= 0;
 
 assign tx_free = tx_state == TX_IDLE;
 assign received = recv_state == RX_RECEIVED;
