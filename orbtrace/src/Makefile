@@ -11,7 +11,7 @@ endif
 
 SUPPORTED_HARDWARE=ICE40HX8K_B_EVN ICE40HX1K_STICK_EVN
 
-TRACEIF_SOURCES=toplevel.v uart.v traceIF.v packSend.v flagSync.v
+TRACEIF_SOURCES=toplevel.v uart.v traceIF.v packSend.v flagSync.v commandIface.v
 
 .PHONY: all clean $(SUPPORTED_HARDWARE) simulate
 

@@ -129,6 +129,7 @@ SB_IO #(.PULLUP(1), .PIN_TYPE(6'b0)) MtraceIn3
    wire 		    wdavail;
    wire [15:0] 		    packetwd;
    wire 		    packetr;
+   wire [2:0] 		    traceWidth;
    
   // -----------------------------------------------------------------------------------------
   traceIF #(.BUSWIDTH(MAX_BUS_WIDTH)) traceif (
@@ -139,7 +140,7 @@ SB_IO #(.PULLUP(1), .PIN_TYPE(6'b0)) MtraceIn3
                    .traceDina(tTraceDina),       // Tracedata rising edge ... 1-n bits
                    .traceDinb(tTraceDinb),       // Tracedata falling edge (LSB) ... 1-n bits		   
                    .traceClkin(BtraceClk),       // Tracedata clock
-		   .width(3'h4),                 // Current trace buffer width 
+		   .width(traceWidth),                 // Current trace buffer width 
 
 		   // Upwards interface to packet processor
 		   .WdAvail(wdavail),            // Flag indicating word is available
@@ -202,6 +203,17 @@ SB_IO #(.PULLUP(1), .PIN_TYPE(6'b0)) MtraceIn3
 	.is_transmitting(txInd_led)
     );
 
+  // -----------------------------------------------------------------------------------------   
+
+   commandIface commandIface (
+	 .clk(clkOut),
+	 .rst(rst),
+	 .latchCommand(rxTrig_tl),
+	 .command(rx_byte_tl),
+//	 .latchResult( ? )
+//	 .result( ? )
+	 .traceWidth(traceWidth)
+   );
   // -----------------------------------------------------------------------------------------   
  // Set up clock for 48Mhz with input of 12MHz
    `ifndef SIMULATION

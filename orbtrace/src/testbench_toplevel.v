@@ -278,6 +278,13 @@ module testbench();
 		sendFrame();
 
 		#20000;
+
+		// check setting of traceWidth via UART
+		initWithReset();
+
+
+		#20000;
+
 		$display("testbench_toplevel: simulation completed.");
 		$finish;
 	end
