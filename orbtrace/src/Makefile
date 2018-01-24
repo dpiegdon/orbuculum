@@ -11,7 +11,9 @@ endif
 
 SUPPORTED_HARDWARE=ICE40HX8K_B_EVN ICE40HX1K_STICK_EVN
 
-TRACEIF_SOURCES=toplevel.v uart.v traceIF.v packSend.v flagSync.v
+TRACEIF_SOURCES=toplevel.v spi.v traceIF.v packSend.v flagSync.v
+# removed: uart.v
+
 TESTBENCH_SOURCES=testbench.v
 
 .PHONY: all clean $(SUPPORTED_HARDWARE) simulate simulate_and_watch
@@ -85,5 +87,4 @@ traceIF_GBIO.blif: $(TRACEIF_SOURCES)
 
 traceIF_GB.blif: BUFFER_FLAGS=-DNO_GB_IO_AVAILABLE
 traceIF_GB.blif: $(TRACEIF_SOURCES)
-
 
