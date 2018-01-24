@@ -5,7 +5,7 @@ module topLevel(
 		input 	    traceClk, // Supporting clock for input - must be on a global clock pin
 
 		output 	    spitx,
-		output 	    spirx,		
+		output 	    spirx,   // FIXME: should this not be an input?
 		input 	    spics,
 		input 	    spiclk,
 		

@@ -11,11 +11,11 @@ module spi (
 	    input 	 cs, 
 	    input 	 transmitIn, // Signal to transmit
 	    input [15:0] tx_word, // Byte to transmit
-	    output 	 tx_free, // Indicator that transmit register is available
+	    output reg	 tx_free, // Indicator that transmit register is available
 	    output 	 is_transmitting, // Low when transmit line is idle.
 	    input 	 sync,
-	    input [2:0]  widthEnc,
-	    output 	 rxFrameReset
+	    output reg [2:0] widthEnc,
+	    output reg   rxFrameReset
 	    );
 
    reg 			 realTransmission;    // Is this real data or an empty frame

@@ -20,8 +20,13 @@ module testbench();
 
 	reg  [3:0] traceDin   = 4'bxxxx;
 	reg        traceClk   = 1'b0;
-	reg        uartrx     = 1'b1;
-	wire       uarttx;
+	wire       spitx;
+//	reg        spirx      = 1'b0; // FIXME direction?!
+	wire       spirx;
+	reg        spics      = 1'b1;
+	reg        spiclk     = 1'b0;
+//	reg        uartrx     = 1'b1;
+//	wire       uarttx;
 	wire       sync_led;
 	wire       rxInd_led;
 	wire       txInd_led;
@@ -41,8 +46,12 @@ module testbench();
 	topLevel top (
 		.traceDin(traceDin),		// [3:0] in
 		.traceClk(traceClk),		//       in
-		.uartrx(uartrx),		//       in
-		.uarttx(uarttx),		//       out
+		.spitx(spitx),			//       out
+		.spirx(spirx),			//       out?!
+		.spics(spics),			//       in
+		.spiclk(spiclk),		//       in
+//		.uartrx(uartrx),		//       in
+//		.uarttx(uarttx),		//       out
 		.sync_led(sync_led),		//       out
 		.rxInd_led(rxInd_led),		//       out
 		.txInd_led(txInd_led),		//       out

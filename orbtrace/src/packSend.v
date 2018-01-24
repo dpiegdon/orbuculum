@@ -16,13 +16,13 @@ module packSend (
 		input [15:0]  PacketWd, // The next packet word
 
 		// Upwards interface to serial (or other) handler : clk Clock
-		output [15:0] DataVal, // Output data value
+		output reg [15:0] DataVal, // Output data value
 
 		input 	      rdClk,
 		input 	      DataNext, // Request for next data element
-		output reg    DataReady = 0, // Indicator that the next data element is available
+		output        DataReady, // Indicator that the next data element is available
 		input 	      DataFrameReset, // Reset to start of data frame
-		output reg    FrameReady, // Indicator that a complete frame of data is available
+		output        FrameReady, // Indicator that a complete frame of data is available
  
 		output 	      DataOverf // Too much data in buffer
  		);
@@ -139,7 +139,6 @@ module packSend (
 	     ovfStretch<=0;
 	     outputRp<=0;
 	     odd<=0;
-	     DataReady<=0;
 	     tickA2B<=0;
 	     outputRpPostBox<=0;
 	     lastTickA<=0;
